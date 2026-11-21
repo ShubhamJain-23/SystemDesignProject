@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn: System Design & DevOps (Part B)</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230a66c2'><path d='M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9h2.79v8.37H6.46v-8.37M7.86 6.8a1.63 1.63 0 1 0 0 3.26 1.63 1.63 0 0 0 0-3.26z'/></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <div class="brand-logo">in</div>
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Search people, posts, tech...">
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="#feed" class="nav-item active">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Home</span>
+        </a>
+        <a href="#architecture" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          <span>Architecture</span>
+        </a>
+        <a href="#api" class="nav-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span>REST API</span>
+        </a>
+        <div class="status-pill" id="healthPill" title="Automated Health Check">
+          <span class="status-dot"></span>
+          <span>CI/CD & Live</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+
+    <!-- Left Sidebar: Member Profile -->
+    <aside class="sidebar-left">
+      <div class="card profile-card">
+        <div class="profile-card-header">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar" class="profile-avatar">
+        </div>
+        <div class="profile-card-body">
+          <h3 id="currentUserName">Shubham Jain</h3>
+          <p id="currentUserHeadline">System Architect & DevOps Engineer</p>
+          <p style="font-size: 11px; color: var(--primary); font-weight: 600; margin-top: 4px;">Assignment Part B: 20 Marks</p>
+        </div>
+        <div class="profile-stats">
+          <div class="stat-row">
+            <span>Connections</span>
+            <span class="stat-val" id="userConnCount">524</span>
+          </div>
+          <div class="stat-row">
+            <span>Followers</span>
+            <span class="stat-val" id="userFollowersCount">1,420</span>
+          </div>
+          <div class="stat-row">
+            <span>Slide 4 REST API</span>
+            <span class="stat-val" style="color: var(--accent-green);">Active</span>
+          </div>
+          <div class="stat-row">
+            <span>Docker Status</span>
+            <span class="stat-val">Multi-Stage</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick System Specs -->
+      <div class="card">
+        <div class="sidebar-title">
+          <span>Target Scale (Slide 2 & 3)</span>
+        </div>
+        <div class="arch-body">
+          <div class="arch-spec-item">
+            <strong>Scale & DAU</strong>
+            <span>1B members &bull; 100M Daily Active</span>
+          </div>
+          <div class="arch-spec-item">
+            <strong>Peak Read Throughput</strong>
+            <span>100K RPS (35K average)</span>
+          </div>
+          <div class="arch-spec-item">
+            <strong>Peak Write Throughput</strong>
+            <span>7K RPS (2.3K average)</span>
+          </div>
+          <div class="arch-spec-item">
+            <strong>New Data Volume</strong>
+            <span>310 TB / year (~1 PB with 3x rep)</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center Content: Feed & Post Creation -->
+    <section class="content-feed">
+      <!-- Create Post Box -->
+      <div class="card post-box">
+        <div class="post-input-row">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;">
+          <textarea id="postContent" rows="2" placeholder="Start a post (e.g. testing Kafka fan-out & Docker pipeline)..."></textarea>
+        </div>
+        <div class="post-action-bar">
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="action-btn" id="btnToggleImage" style="font-size: 12px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Add Image</span>
+            </button>
+          </div>
+          <button type="button" class="btn-post" id="btnPublishPost">Post</button>
+        </div>
+        <div id="imageInputRow" style="display: none; margin-top: 10px;">
+          <input type="url" id="postImageUrl" placeholder="Paste image URL (optional)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px;">
+        </div>
+      </div>
+
+      <!-- Feed Stream -->
+      <div id="feedStream">
+        <div style="text-align: center; padding: 20px; color: var(--text-secondary);">Loading feed via GET /v1/feed...</div>
+      </div>
+    </section>
+
+    <!-- Right Sidebar: System Architecture, Docker & Live API Tester -->
+    <aside class="sidebar-right">
+      <!-- System Design Architecture Card (From Slide 5 & 6) -->
+      <div class="card" id="architecture">
+        <div class="sidebar-title">
+          <span>System Architecture (Slide 5)</span>
+          <span class="arch-pill">DevOps</span>
+        </div>
+        <div class="arch-body">
+          <div class="arch-spec-item">
+            <strong>Gateway & Caching</strong>
+            <span>API Gateway &bull; Redis L1 Cache (90% hit rate cuts DB RPS 10x)</span>
+          </div>
+          <div class="arch-spec-item">
+            <strong>Databases per Pattern (Slide 6)</strong>
+            <span>MySQL: Profiles & Connections (Sharded hash of member_id)<br>Cassandra: Posts, Timeline & Messaging<br>Elasticsearch: Full-text Search<br>S3 + CDN: 270 TB/yr Media</span>
+          </div>
+          <div class="arch-spec-item">
+            <strong>Event Streaming & Fan-Out</strong>
+            <span>Kafka Topics: <code>post.created</code>, <code>post.engagement</code><br>Hybrid Fan-out: Push for &lt;10K, Pull for &gt;10K (Slide 8)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live REST API Playground (Slide 4) -->
+      <div class="card" id="api">
+        <div class="sidebar-title">
+          <span>Slide 4 REST API Tester</span>
+          <span class="arch-pill">Interactive</span>
+        </div>
+        <div class="api-tester">
+          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">Click any endpoint below to test live in real-time:</p>
+          <button class="api-btn" onclick="testApi('/api/v1/health')">GET /api/v1/health</button>
+          <button class="api-btn" onclick="testApi('/api/v1/feed?limit=2')">GET /api/v1/feed?limit=2</button>
+          <button class="api-btn" onclick="testApi('/api/v1/members/usr_101')">GET /api/v1/members/usr_101</button>
+          <button class="api-btn" onclick="testApi('/api/v1/search?q=DevOps&type=all')">GET /api/v1/search?q=DevOps</button>
+          <button class="api-btn" onclick="testApi('/api/v1/system/architecture')">GET /api/v1/system/architecture</button>
+          <div class="api-response-box" id="apiOutput">// Response output will appear here...</div>
+        </div>
+      </div>
+
+      <!-- Assignment Deliverables Checklist -->
+      <div class="card">
+        <div class="sidebar-title">
+          <span>Part B Deliverables Checklist</span>
+        </div>
+        <div class="arch-body" style="font-size: 12px; line-height: 1.6;">
+          <div>✅ <strong>1. Working App:</strong> LinkedIn REST API & UI</div>
+          <div>✅ <strong>2. Docker:</strong> Multi-stage Dockerfile</div>
+          <div>✅ <strong>3. Git Repo:</strong> Branches, PRs, semantic commits</div>
+          <div>✅ <strong>4. CI/CD:</strong> GitHub Actions automated push workflow</div>
+          <div>✅ <strong>5. Deployment:</strong> Live link on Vercel</div>
+          <div>✅ <strong>6. README:</strong> Architecture, setup & live link</div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

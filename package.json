@@ -1,0 +1,25 @@
+{
+  "name": "linkedin-system-design-app",
+  "version": "1.0.0",
+  "description": "System Design & DevOps Part B - LinkedIn Scalable Web Application with Docker, CI/CD, and Vercel Deployment",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "keywords": [
+    "system-design",
+    "devops",
+    "docker",
+    "ci-cd",
+    "github-actions",
+    "vercel",
+    "linkedin-api"
+  ],
+  "author": "Shubham Jain",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
